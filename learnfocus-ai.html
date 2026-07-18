@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnFocus AI — Learn Skills, Not Distractions.
+  <br> ~LANKE SHIRISHA
+</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg-0:#0F172A;
+  --bg-1:#1E293B;
+  --panel: rgba(255,255,255,0.04);
+  --panel-border: rgba(255,255,255,0.09);
+  --cyan:#22D3EE;
+  --purple:#A855F7;
+  --blue:#3B82F6;
+  --text-hi:#F1F5F9;
+  --text-mid:#94A3B8;
+  --text-low:#64748B;
+  --success:#34D399;
+  --warn:#FBBF24;
+  --radius:16px;
+  --radius-sm:10px;
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  color:var(--text-hi);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(168,85,247,0.16), transparent 60%),
+    radial-gradient(1000px 700px at 110% 10%, rgba(34,211,238,0.14), transparent 55%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(34,211,238,.35); color:#fff;}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+button{font-family:inherit; cursor:pointer;}
+.container{max-width:1240px; margin:0 auto; padding:0 24px;}
+h1,h2,h3,h4{font-family:var(--font-display); line-height:1.15; letter-spacing:-0.01em;}
+.eyebrow{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--cyan); display:flex; align-items:center; gap:8px; margin-bottom:14px;
+}
+.eyebrow::before{content:''; width:16px; height:1px; background:var(--cyan);}
+.gradient-text{
+  background:linear-gradient(92deg, var(--cyan) 0%, var(--blue) 45%, var(--purple) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+:focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:6px;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+
+/* ============ GLASS PANEL ============ */
+.glass{
+  background:var(--panel);
+  border:1px solid var(--panel-border);
+  border-radius:var(--radius);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.glass-strong{
+  background:rgba(15,23,42,0.55);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ============ NAV ============ */
+.nav{
+  position:sticky; top:0; z-index:100;
+  background:rgba(15,23,42,0.65);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-inner{display:flex; align-items:center; justify-content:space-between; height:72px;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:19px;}
+.brand-mark{
+  width:34px; height:34px; border-radius:9px;
+  background:linear-gradient(135deg, var(--cyan), var(--purple));
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; box-shadow:0 0 18px rgba(34,211,238,.45);
+  flex-shrink:0;
+}
+.nav-links{display:flex; gap:6px; list-style:none;}
+.nav-links a{
+  padding:9px 14px; border-radius:999px; font-size:14px; font-weight:500; color:var(--text-mid);
+  transition:.25s var(--ease);
+}
+.nav-links a:hover, .nav-links a.active{ color:var(--text-hi); background:rgba(255,255,255,0.06); }
+.nav-actions{display:flex; align-items:center; gap:12px;}
+.burger{display:none; width:38px; height:38px; border-radius:9px; border:1px solid var(--panel-border); background:transparent; color:var(--text-hi); align-items:center; justify-content:center; font-size:18px;}
+
+/* Focus toggle */
+.focus-switch{
+  display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:12px; color:var(--text-mid);
+  padding:6px 10px 6px 6px; border-radius:999px; border:1px solid var(--panel-border);
+}
+.switch{
+  width:38px; height:22px; border-radius:999px; background:rgba(255,255,255,0.1); position:relative; transition:.25s var(--ease); border:none; flex-shrink:0;
+}
+.switch::after{content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; transition:.25s var(--ease);}
+.switch.on{background:linear-gradient(90deg, var(--cyan), var(--purple)); box-shadow:0 0 12px rgba(34,211,238,.5);}
+.switch.on::after{left:18px;}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 22px; border-radius:999px; font-weight:600; font-size:14px; border:none;
+  transition:.28s var(--ease); position:relative; overflow:hidden; white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(92deg, var(--cyan), var(--blue) 55%, var(--purple));
+  color:#04121F; box-shadow:0 6px 24px rgba(59,130,246,.35);
+}
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 30px rgba(168,85,247,.45); }
+.btn-ghost{
+  background:rgba(255,255,255,0.05); color:var(--text-hi); border:1px solid var(--panel-border);
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,.25);}
+.btn-sm{padding:8px 14px; font-size:13px; border-radius:999px;}
+.btn:active{transform:scale(.97);}
+
+/* ============ HERO ============ */
+.hero{ position:relative; padding:96px 0 80px; overflow:hidden; }
+.orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.55; z-index:0; animation:float 12s ease-in-out infinite; }
+.orb-1{width:420px; height:420px; background:var(--purple); top:-160px; left:-120px;}
+.orb-2{width:380px; height:380px; background:var(--cyan); top:40px; right:-140px; animation-delay:-4s;}
+.orb-3{width:300px; height:300px; background:var(--blue); bottom:-160px; left:35%; animation-delay:-8s;}
+@keyframes float{ 0%,100%{transform:translateY(0) translateX(0);} 50%{transform:translateY(-30px) translateX(20px);} }
+
+.hero-inner{position:relative; z-index:1; text-align:center; max-width:820px; margin:0 auto;}
+.hero h1{ font-size:clamp(36px, 6vw, 64px); font-weight:700; margin-bottom:18px; }
+.hero p.sub{ color:var(--text-mid); font-size:18px; max-width:560px; margin:0 auto 40px; }
+
+.search-shell{ max-width:640px; margin:0 auto; }
+.search-box{
+  display:flex; align-items:center; gap:10px; padding:8px 8px 8px 20px; border-radius:999px;
+  position:relative;
+}
+.search-box input{
+  flex:1; background:transparent; border:none; outline:none; color:var(--text-hi); font-size:15px; padding:10px 0; font-family:var(--font-body);
+}
+.search-box input::placeholder{color:var(--text-low);}
+.search-icon{color:var(--text-mid); font-size:16px;}
+
+.suggest-chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:22px; }
+.chip{
+  font-size:12.5px; font-family:var(--font-mono); padding:7px 14px; border-radius:999px;
+  border:1px solid var(--panel-border); background:rgba(255,255,255,0.03); color:var(--text-mid);
+  transition:.2s var(--ease);
+}
+.chip:hover{ color:var(--text-hi); border-color:var(--cyan); box-shadow:0 0 14px rgba(34,211,238,.25); transform:translateY(-1px);}
+
+.autocomplete{
+  position:absolute; top:calc(100% + 10px); left:0; right:0; border-radius:14px; overflow:hidden; z-index:20;
+  display:none; text-align:left;
+}
+.autocomplete.show{display:block;}
+.autocomplete div{ padding:11px 18px; font-size:14px; color:var(--text-mid); transition:.15s; cursor:pointer; }
+.autocomplete div:hover{ background:rgba(255,255,255,0.06); color:var(--text-hi); }
+.autocomplete div b{color:var(--cyan); font-weight:600;}
+
+.hero-stats{ display:flex; gap:34px; justify-content:center; margin-top:56px; flex-wrap:wrap; }
+.hero-stat{text-align:center;}
+.hero-stat .num{ font-family:var(--font-display); font-size:28px; font-weight:700; }
+.hero-stat .lbl{ font-size:12px; color:var(--text-mid); font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; }
+
+/* ============ SECTION GENERIC ============ */
+section{ padding:72px 0; position:relative; }
+.section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:14px;}
+.section-head h2{ font-size:clamp(24px,3.4vw,34px); }
+.section-head p{color:var(--text-mid); font-size:14.5px; max-width:480px;}
+
+/* ============ TRENDING GRID ============ */
+.grid-4{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+.tech-card{
+  padding:22px; cursor:pointer; transition:.3s var(--ease); position:relative;
+}
+.tech-card:hover{ transform:translateY(-5px); border-color:rgba(34,211,238,.4); box-shadow:0 14px 30px rgba(15,23,42,.5); }
+.tech-icon{ font-size:26px; margin-bottom:14px; display:inline-block; }
+.tech-card h4{ font-size:16px; margin-bottom:6px; }
+.tech-card .growth{ font-family:var(--font-mono); font-size:12px; color:var(--success); }
+.tech-bar{ height:4px; border-radius:2px; background:rgba(255,255,255,.08); margin-top:14px; overflow:hidden; }
+.tech-bar span{ display:block; height:100%; border-radius:2px; background:linear-gradient(90deg,var(--cyan),var(--purple)); }
+
+/* ============ VIDEO RESULTS ============ */
+.tabs{ display:flex; gap:8px; margin-bottom:26px; flex-wrap:wrap; }
+.tab{ padding:9px 16px; border-radius:999px; font-size:13px; font-weight:500; color:var(--text-mid); border:1px solid var(--panel-border); background:transparent; }
+.tab.active{ color:#04121F; background:linear-gradient(92deg,var(--cyan),var(--purple)); border-color:transparent; }
+
+.video-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.video-card{ overflow:hidden; transition:.3s var(--ease); }
+.video-card:hover{ transform:translateY(-4px); border-color:rgba(168,85,247,.4); }
+.thumb-wrap{ position:relative; aspect-ratio:16/9; background:#0b1220; overflow:hidden; }
+.thumb-wrap img{ width:100%; height:100%; object-fit:cover; transition:.4s var(--ease); }
+.video-card:hover .thumb-wrap img{ transform:scale(1.06); }
+.duration-badge{
+  position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,.75); font-family:var(--font-mono);
+  font-size:11px; padding:3px 7px; border-radius:5px;
+}
+.level-badge{
+  position:absolute; top:8px; left:8px; font-size:10.5px; font-family:var(--font-mono); text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; letter-spacing:.05em; backdrop-filter:blur(6px);
+}
+.level-beginner{ background:rgba(52,211,153,.2); color:var(--success); border:1px solid rgba(52,211,153,.4);}
+.level-intermediate{ background:rgba(251,191,36,.2); color:var(--warn); border:1px solid rgba(251,191,36,.4);}
+.level-advanced{ background:rgba(248,113,113,.2); color:#F87171; border:1px solid rgba(248,113,113,.4);}
+.play-overlay{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(15,23,42,0); transition:.25s; opacity:0;
+}
+.thumb-wrap:hover .play-overlay{ opacity:1; background:rgba(15,23,42,.35); }
+.play-circle{
+  width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.4);
+  display:flex; align-items:center; justify-content:center; font-size:18px; backdrop-filter:blur(6px);
+}
+.video-body{ padding:16px; }
+.video-body h4{ font-size:14.5px; font-weight:600; line-height:1.4; margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:40px;}
+.video-meta{ display:flex; align-items:center; justify-content:space-between; font-size:12px; color:var(--text-mid); margin-bottom:12px;}
+.video-meta .ch{ color:var(--cyan); }
+.video-actions{ display:flex; gap:8px; }
+.icon-btn{
+  width:34px; height:34px; border-radius:9px; border:1px solid var(--panel-border); background:rgba(255,255,255,.03);
+  color:var(--text-mid); display:flex; align-items:center; justify-content:center; font-size:14px; transition:.2s;
+}
+.icon-btn:hover{ color:var(--cyan); border-color:var(--cyan); }
+.icon-btn.saved{ color:var(--purple); border-color:var(--purple); }
+
+.ai-pick-strip{
+  display:flex; align-items:center; gap:10px; padding:14px 18px; margin-bottom:26px;
+  border-left:2px solid var(--cyan);
+}
+.ai-pick-strip .ai-badge{
+  font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--cyan);
+  background:rgba(34,211,238,.1); padding:5px 10px; border-radius:6px; flex-shrink:0;
+}
+
+/* ============ ROADMAP (SIGNATURE ELEMENT) ============ */
+.roadmap-shell{ position:relative; padding:20px 0 10px; }
+.roadmap-track{ position:relative; padding-left:34px; }
+.roadmap-track::before{
+  content:''; position:absolute; left:9px; top:8px; bottom:8px; width:2px;
+  background:linear-gradient(180deg, var(--cyan), var(--blue), var(--purple));
+}
+.road-step{ position:relative; padding:0 0 32px 22px; }
+.road-step:last-child{ padding-bottom:0; }
+.road-step::before{
+  content: attr(data-index);
+  position:absolute; left:-34px; top:0; width:20px; height:20px; border-radius:50%;
+  background:var(--bg-1); border:2px solid var(--cyan); display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:10px; color:var(--cyan); z-index:1;
+}
+.road-card{ padding:18px 20px; }
+.road-card .stage-lbl{ font-family:var(--font-mono); font-size:11px; color:var(--text-low); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px;}
+.road-card h4{ font-size:16.5px; margin-bottom:6px; }
+.road-card p{ font-size:13.5px; color:var(--text-mid); }
+.road-card .time-est{ font-family:var(--font-mono); font-size:11.5px; color:var(--cyan); margin-top:10px; display:inline-block; }
+
+/* ============ FOCUS MODE (spotlight effect) ============ */
+body.focus-mode .distract{ display:none !important; }
+body.focus-mode::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
+  background:radial-gradient(1400px 900px at 50% 30%, transparent 40%, rgba(0,0,0,.55) 100%);
+}
+body.focus-mode .nav-links li:not(.keep-focus){ display:none; }
+.focus-banner{
+  display:none; text-align:center; padding:12px; font-family:var(--font-mono); font-size:12.5px;
+  color:var(--cyan); background:rgba(34,211,238,.08); border-bottom:1px solid rgba(34,211,238,.25);
+}
+body.focus-mode .focus-banner{ display:block; }
+
+/* ============ DASHBOARD ============ */
+.dash-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:20px; }
+.dash-col{ display:flex; flex-direction:column; gap:20px; }
+.stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.stat-card{ padding:20px; text-align:center; }
+.stat-card .icon{ font-size:22px; margin-bottom:8px; }
+.stat-card .val{ font-family:var(--font-display); font-size:24px; font-weight:700; }
+.stat-card .lbl{ font-size:11.5px; color:var(--text-mid); font-family:var(--font-mono); }
+.panel-title{ font-size:15px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+.panel-pad{ padding:22px; }
+
+.progress-item{ margin-bottom:16px; }
+.progress-item:last-child{margin-bottom:0;}
+.progress-item .top{ display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;}
+.progress-item .top span:last-child{color:var(--text-mid); font-family:var(--font-mono); font-size:12px;}
+.pbar{ height:6px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden; }
+.pbar span{ display:block; height:100%; border-radius:4px; background:linear-gradient(90deg,var(--cyan),var(--purple)); transition:width .6s var(--ease); }
+
+.recent-list, .fav-list{ list-style:none; display:flex; flex-direction:column; gap:10px; }
+.recent-list li{
+  display:flex; align-items:center; justify-content:space-between; font-size:13.5px; padding:10px 12px;
+  border-radius:10px; background:rgba(255,255,255,.03); border:1px solid transparent; transition:.2s;
+}
+.recent-list li:hover{ border-color:var(--panel-border); }
+.recent-list li .time{ color:var(--text-low); font-family:var(--font-mono); font-size:11px; }
+
+.streak-flame{ font-size:34px; }
+
+/* ============ CHATBOT ============ */
+.chat-fab{
+  position:fixed; bottom:26px; right:26px; width:58px; height:58px; border-radius:50%; z-index:200;
+  background:linear-gradient(135deg,var(--cyan),var(--purple)); border:none; font-size:22px;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 8px 30px rgba(168,85,247,.5);
+  transition:.3s var(--ease);
+}
+.chat-fab:hover{ transform:scale(1.08) rotate(8deg); }
+.chat-panel{
+  position:fixed; bottom:96px; right:26px; width:340px; max-height:440px; z-index:200; display:none;
+  flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.chat-panel.open{ display:flex; }
+.chat-head{ padding:14px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--panel-border); }
+.chat-head .dot{ width:8px; height:8px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success); }
+.chat-body{ flex:1; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+.msg{ max-width:85%; padding:10px 13px; border-radius:12px; font-size:13px; line-height:1.5; }
+.msg.bot{ background:rgba(255,255,255,.06); align-self:flex-start; border-bottom-left-radius:2px; }
+.msg.user{ background:linear-gradient(92deg,var(--cyan),var(--blue)); color:#04121F; align-self:flex-end; border-bottom-right-radius:2px; }
+.chat-input-row{ display:flex; gap:8px; padding:12px; border-top:1px solid var(--panel-border); }
+.chat-input-row input{ flex:1; background:rgba(255,255,255,.04); border:1px solid var(--panel-border); border-radius:999px; padding:9px 14px; color:var(--text-hi); font-size:13px; outline:none; }
+.chat-input-row button{ width:36px; height:36px; border-radius:50%; border:none; background:linear-gradient(135deg,var(--cyan),var(--purple)); color:#04121F; flex-shrink:0; }
+
+/* ============ ABOUT ============ */
+.about-grid{ display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+.about-points{ list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:20px;}
+.about-points li{ display:flex; gap:12px; font-size:14.5px; color:var(--text-mid); }
+.about-points li b{ color:var(--text-hi); }
+.check{ color:var(--success); flex-shrink:0; }
+
+/* ============ FOOTER ============ */
+footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40px; }
+.foot-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+.foot-inner p{ font-size:13px; color:var(--text-low); }
+.foot-links{ display:flex; gap:20px; list-style:none; font-size:13px; color:var(--text-mid); }
+
+/* ============ LOADER ============ */
+.loader-wrap{ display:none; flex-direction:column; align-items:center; gap:16px; padding:50px 0; }
+.loader-wrap.show{ display:flex; }
+.spinner{
+  width:44px; height:44px; border-radius:50%; border:3px solid rgba(255,255,255,.1);
+  border-top-color:var(--cyan); border-right-color:var(--purple); animation:spin .9s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.loader-wrap p{ font-family:var(--font-mono); font-size:12.5px; color:var(--text-mid); }
+
+.empty-state{ text-align:center; padding:50px 20px; color:var(--text-mid); }
+.empty-state .big{ font-size:32px; margin-bottom:12px; }
+
+.toast{
+  position:fixed; bottom:26px; left:26px; padding:12px 18px; border-radius:12px; font-size:13px;
+  z-index:300; opacity:0; transform:translateY(10px); transition:.3s var(--ease); pointer-events:none;
+}
+.toast.show{ opacity:1; transform:translateY(0); }
+
+/* API key note */
+.api-note{ font-size:12px; color:var(--text-low); margin-top:10px; }
+.api-note button{ color:var(--cyan); background:none; border:none; text-decoration:underline; font-size:12px; padding:0; }
+.key-row{ display:flex; gap:8px; margin-top:10px; display:none; }
+.key-row.show{ display:flex; }
+.key-row input{ flex:1; background:rgba(255,255,255,.04); border:1px solid var(--panel-border); border-radius:8px; padding:8px 12px; color:var(--text-hi); font-size:12.5px; outline:none; font-family:var(--font-mono); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 980px){
+  .grid-4{ grid-template-columns:repeat(2,1fr); }
+  .video-grid{ grid-template-columns:repeat(2,1fr); }
+  .dash-grid{ grid-template-columns:1fr; }
+  .about-grid{ grid-template-columns:1fr; }
+}
+@media (max-width: 720px){
+  .nav-links{ display:none; }
+  .burger{ display:flex; }
+  .focus-switch span{ display:none; }
+  .video-grid{ grid-template-columns:1fr; }
+  .grid-4{ grid-template-columns:1fr 1fr; }
+  .hero{ padding:64px 0 56px; }
+  .stat-row{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="focus-banner">Focus Learning Mode is on — distractions hidden. Only your selected learning content is shown.</div>
+  <div class="container nav-inner">
+    <div class="brand"><div class="brand-mark">◆</div>LearnFocus <span class="gradient-text">AI</span></div>
+    <ul class="nav-links">
+      <li class="keep-focus"><a href="#home" class="active">Home</a></li>
+      <li><a href="#search">Search Skills</a></li>
+      <li><a href="#trending">Trending Technologies</a></li>
+      <li><a href="#interview">Interview Preparation</a></li>
+      <li><a href="#languages">Programming Languages</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="focus-switch"><span>Focus Mode</span><button class="switch" id="focusToggle" aria-label="Toggle focus learning mode"></button></div>
+      <button class="burger" id="burgerBtn">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="container hero-inner">
+    <div class="eyebrow" style="justify-content:center;">AI-curated learning, zero noise</div>
+    <h1>Learn Skills, Not <span class="gradient-text">Distractions.</span></h1>
+    <p class="sub">Search any skill — LearnFocus AI filters the internet's best educational videos, builds you a roadmap, and strips away everything that isn't learning.</p>
+
+    <div class="search-shell">
+      <div class="glass-strong search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Try “Python”, “Machine Learning”, “Interview Preparation”…" autocomplete="off">
+        <button class="btn btn-primary" id="searchBtn">Search</button>
+      </div>
+      <div class="autocomplete glass-strong" id="autocomplete"></div>
+      <div class="suggest-chips">
+        <button class="chip" data-q="Python">Python</button>
+        <button class="chip" data-q="Java">Java</button>
+        <button class="chip" data-q="C++">C++</button>
+        <button class="chip" data-q="Data Science">Data Science</button>
+        <button class="chip" data-q="Machine Learning">Machine Learning</button>
+        <button class="chip" data-q="Web Development">Web Development</button>
+        <button class="chip" data-q="Interview Preparation">Interview Prep</button>
+        <button class="chip" data-q="Aptitude">Aptitude</button>
+        <button class="chip" data-q="Communication Skills">Communication Skills</button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num gradient-text">12K+</div><div class="lbl">Curated Videos</div></div>
+      <div class="hero-stat"><div class="num gradient-text">40+</div><div class="lbl">Skill Roadmaps</div></div>
+      <div class="hero-stat"><div class="num gradient-text">0</div><div class="lbl">Shorts &amp; Reels</div></div>
+      <div class="hero-stat"><div class="num gradient-text">100%</div><div class="lbl">Education Only</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRENDING TECHNOLOGIES ============ -->
+<section id="trending">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">What everyone's learning</div>
+        <h2>Trending Technologies</h2>
+      </div>
+      <p>Ranked by search demand and hiring signals this quarter. Tap any card to load its curated video set.</p>
+    </div>
+    <div class="grid-4" id="trendingGrid"></div>
+  </div>
+</section>
+
+<!-- ============ SEARCH RESULTS / AI PICKS ============ -->
+<section id="search">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" id="resultsEyebrow">Educational results only</div>
+        <h2 id="resultsHeading">Search a skill to begin</h2>
+      </div>
+      <div>
+        <div class="tabs" id="levelTabs">
+          <button class="tab active" data-level="all">All Levels</button>
+          <button class="tab" data-level="beginner">Beginner</button>
+          <button class="tab" data-level="intermediate">Intermediate</button>
+          <button class="tab" data-level="advanced">Advanced</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass ai-pick-strip distract" id="aiPickStrip" style="display:none;">
+      <span class="ai-badge">AI Pick</span>
+      <span id="aiPickText" style="font-size:13.5px; color:var(--text-mid);"></span>
+    </div>
+
+    <div class="loader-wrap" id="loader">
+      <div class="spinner"></div>
+      <p>AI is filtering out distractions & ranking educational videos…</p>
+    </div>
+
+    <div class="video-grid" id="videoGrid"></div>
+    <div class="empty-state" id="emptyState">
+      <div class="big">🎯</div>
+      <p>Try “Python”, “Machine Learning” or any skill above — LearnFocus AI will fetch only the best educational videos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap-section" style="display:none;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Structured path, not a playlist</div>
+        <h2>Your Skill Roadmap — <span class="gradient-text" id="roadmapSkillName">Python</span></h2>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="shareRoadmapBtn">↗ Share Roadmap</button>
+    </div>
+    <div class="glass panel-pad roadmap-shell">
+      <div class="roadmap-track" id="roadmapTrack"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INTERVIEW PREP ============ -->
+<section id="interview">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Get hire-ready</div>
+        <h2>Interview Preparation</h2>
+      </div>
+      <p>Company-style mock questions, aptitude drills, and communication coaching — all in one focused track.</p>
+    </div>
+    <div class="grid-4" id="interviewGrid"></div>
+  </div>
+</section>
+
+<!-- ============ PROGRAMMING LANGUAGES ============ -->
+<section id="languages">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Pick a language</div>
+        <h2>Programming Languages</h2>
+      </div>
+      <p>Each card loads a full beginner → advanced curated video set and roadmap.</p>
+    </div>
+    <div class="grid-4" id="languageGrid"></div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="dashboard" class="distract">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Your progress</div>
+        <h2>Learning Dashboard</h2>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-col">
+        <div class="stat-row">
+          <div class="glass stat-card"><div class="icon streak-flame">🔥</div><div class="val" id="streakVal">6</div><div class="lbl">Day Streak</div></div>
+          <div class="glass stat-card"><div class="icon">🎬</div><div class="val" id="watchedVal">18</div><div class="lbl">Videos Watched</div></div>
+          <div class="glass stat-card"><div class="icon">⭐</div><div class="val" id="favVal">0</div><div class="lbl">Bookmarked</div></div>
+        </div>
+        <div class="glass panel-pad">
+          <div class="panel-title">📈 Skill Completion</div>
+          <div id="progressList"></div>
+        </div>
+      </div>
+      <div class="dash-col">
+        <div class="glass panel-pad">
+          <div class="panel-title">🕘 Recently Searched</div>
+          <ul class="recent-list" id="recentList"></ul>
+        </div>
+        <div class="glass panel-pad">
+          <div class="panel-title">💖 Favorite Videos</div>
+          <ul class="fav-list" id="favList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="container about-grid">
+    <div>
+      <div class="eyebrow">Why LearnFocus AI</div>
+      <h2>Built for students who want <span class="gradient-text">outcomes</span>, not endless scrolling.</h2>
+      <p style="color:var(--text-mid); margin-top:14px; font-size:14.5px;">LearnFocus AI wraps YouTube's Data API with an educational filter layer — ranking by relevance, view quality, and channel credibility, then organizing everything into a roadmap you can actually finish.</p>
+      <ul class="about-points">
+        <li><span class="check">✔</span><div><b>Zero distractions</b> — no comments, no suggested videos, no Shorts.</div></li>
+        <li><span class="check">✔</span><div><b>AI-ranked</b> — top 5 picks per skill, sorted by real learning value.</div></li>
+        <li><span class="check">✔</span><div><b>Leveled content</b> — beginner, intermediate and advanced, always separated.</div></li>
+        <li><span class="check">✔</span><div><b>Roadmaps included</b> — every skill maps to a finishable, staged path.</div></li>
+      </ul>
+    </div>
+    <div class="glass panel-pad">
+      <div class="panel-title">⚙️ YouTube Data API v3 Connection</div>
+      <p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data.</p>
+      <div class="api-note">
+        <button id="showKeyRow">＋ Connect your own YouTube API key</button>
+      </div>
+      <div class="key-row" id="keyRow">
+        <input type="text" id="apiKeyInput" placeholder="Paste YouTube Data API v3 key…">
+        <button class="btn btn-primary btn-sm" id="saveKeyBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container foot-inner">
+    <div class="brand" style="font-size:15px;"><div class="brand-mark" style="width:26px;height:26px;font-size:12px;">◆</div>LearnFocus AI</div>
+    <p>© 2026 LearnFocus AI · Learn Skills, Not Distractions.</p>
+    <ul class="foot-links"><li>Privacy</li><li>Terms</li><li>Contact</li></ul>
+  </div>
+</footer>
+
+<!-- ============ CHATBOT ============ -->
+<button class="chat-fab distract" id="chatFab" aria-label="Open AI learning assistant">🤖</button>
+<div class="glass-strong chat-panel distract" id="chatPanel">
+  <div class="chat-head">
+    <span class="dot"></span>
+    <div>
+      <div style="font-size:13.5px; font-weight:600;">AI Learning Assistant</div>
+      <div style="font-size:11px; color:var(--text-mid);">Ask about roadmaps, skills, or study tips</div>
+    </div>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="msg bot">Hi! I'm your AI learning assistant. Ask me things like “roadmap for Java” or “how long to learn Python?”</div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask me anything…">
+    <button id="chatSend">➤</button>
+  </div>
+</div>
+
+<div class="toast glass-strong" id="toast"></div>
+
+<script>
+/* =========================================================
+   LearnFocus AI — application logic
+   ========================================================= */
+
+/* ---------- In-memory state (no localStorage per platform rules) ---------- */
+const state = {
+  focusMode: false,
+  youtubeApiKey: '',
+  currentSkill: null,
+  currentLevel: 'all',
+  recentSearches: [],
+  favorites: [],
+  watched: 18,
+  streak: 6,
+  progress: { Python: 62, JavaScript: 40, 'Data Science': 25 }
+};
+
+/* ---------- Skill catalog: roadmap + demo video generation ---------- */
+const SKILL_ROADMAPS = {
+  'Python': ['Getting Started & Setup','Variables & Data Types','Loops & Conditionals','Functions & Modules','Object-Oriented Programming','Real Projects','Interview Questions'],
+  'Java': ['Java Basics & JVM','Variables & Operators','Control Flow & Loops','OOP: Classes & Objects','Collections & Exceptions','Spring / Projects','Interview Questions'],
+  'C++': ['Setup & Syntax Basics','Variables & Pointers','Loops & Control Flow','Functions & Recursion','OOP & STL','DSA Projects','Interview Questions'],
+  'Data Science': ['Python for Data Science','Statistics Foundations','Pandas & NumPy','Data Visualization','Machine Learning Basics','Capstone Project','Interview Questions'],
+  'AI': ['Math Foundations (Linear Algebra)','Python for AI','Machine Learning Basics','Neural Networks','Deep Learning Frameworks','AI Projects','Interview Questions'],
+  'Machine Learning': ['Python & Statistics Refresher','Supervised Learning','Unsupervised Learning','Model Evaluation','Feature Engineering','ML Projects','Interview Questions'],
+  'Web Development': ['HTML & CSS Basics','JavaScript Fundamentals','Responsive Design','Frontend Framework (React)','Backend & APIs','Full Stack Project','Interview Questions'],
+  'Interview Preparation': ['Resume & Profile Setup','Aptitude & Reasoning','Core Subject Revision','Mock Technical Rounds','System Design Basics','Behavioral Rounds','Final Mock Interviews'],
+  'Aptitude': ['Number Systems','Percentages & Ratios','Time, Speed & Work','Logical Reasoning','Data Interpretation','Puzzles','Timed Mock Tests'],
+  'Communication Skills': ['Foundations of Clear Speech','Vocabulary Building','Public Speaking Basics','Body Language','Group Discussions','Mock Interviews','Advanced Presentation Skills']
+};
+const DEFAULT_ROADMAP = ['Foundations','Core Concepts','Hands-on Practice','Intermediate Topics','Advanced Techniques','Real Projects','Interview Preparation'];
+
+const CHANNELS = ['CodeWithHarry','freeCodeCamp.org','Programming with Mosh','Traversy Media','CS Dojo','Corey Schafer','Apna College','Simplilearn','edureka!','Krish Naik','NeetCode','Tech With Tim'];
+
+function hashSeed(str){ let h=0; for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i))>>>0; } return h; }
+function seededRand(seed){ let s = seed; return function(){ s = (s*9301+49297) % 233280; return s/233280; }; }
+
+function generateDemoVideos(skill){
+  const levels = ['beginner','intermediate','advanced'];
+  const rand = seededRand(hashSeed(skill));
+  const vids = [];
+  const titleTemplates = {
+    beginner: [`${skill} Full Course for Beginners`, `${skill} Tutorial — Learn ${skill} in 2 Hours`, `${skill} Crash Course 2026`, `Learn ${skill} from Scratch — Complete Guide`],
+    intermediate: [`${skill} Intermediate Concepts Explained`, `Master ${skill}: Real-World Examples`, `${skill} Deep Dive Tutorial`, `${skill} Best Practices & Patterns`],
+    advanced: [`Advanced ${skill} Techniques`, `${skill} System Design & Architecture`, `${skill} Interview-Level Concepts`, `Pro ${skill}: Advanced Projects`]
+  };
+  let id = 0;
+  levels.forEach(level=>{
+    titleTemplates[level].forEach(title=>{
+      id++;
+      const views = Math.floor(50000 + rand()*4500000);
+      const mins = level==='beginner' ? Math.floor(20+rand()*100) : level==='intermediate' ? Math.floor(15+rand()*60) : Math.floor(10+rand()*45);
+      const ch = CHANNELS[Math.floor(rand()*CHANNELS.length)];
+      vids.push({
+        id: skill.replace(/\s+/g,'-').toLowerCase()+'-'+id,
+        title, level, channel: ch, views,
+        duration: `${mins}:${String(Math.floor(rand()*59)).padStart(2,'0')}`,
+        thumb: `https://placehold.co/640x360/0f172a/22d3ee?text=${encodeURIComponent(skill)}`,
+      });
+    });
+  });
+  return vids.sort((a,b)=>b.views-a.views);
+}
+
+function formatViews(v){
+  if(v>=1000000) return (v/1000000).toFixed(1)+'M views';
+  if(v>=1000) return (v/1000).toFixed(1)+'K views';
+  return v+' views';
+}
+
+/* ---------- Trending technologies ---------- */
+const TRENDING = [
+  {name:'Artificial Intelligence', icon:'🧠', growth:'+64% demand', bar:92},
+  {name:'Machine Learning', icon:'🤖', growth:'+51% demand', bar:85},
+  {name:'Data Science', icon:'📊', growth:'+47% demand', bar:80},
+  {name:'Web Development', icon:'🌐', growth:'+38% demand', bar:75},
+  {name:'Cloud Computing', icon:'☁️', growth:'+42% demand', bar:78},
+  {name:'Cybersecurity', icon:'🛡️', growth:'+55% demand', bar:88},
+  {name:'Python', icon:'🐍', growth:'+60% demand', bar:90},
+  {name:'DevOps', icon:'⚙️', growth:'+33% demand', bar:70},
+];
+const LANGUAGES = [
+  {name:'Python', icon:'🐍'}, {name:'Java', icon:'☕'}, {name:'C++', icon:'➕'}, {name:'JavaScript', icon:'📜'},
+  {name:'Go', icon:'🐹'}, {name:'Rust', icon:'⚙️'}, {name:'C', icon:'🔧'}, {name:'SQL', icon:'🗄️'}
+];
+const INTERVIEW_TOPICS = [
+  {name:'Aptitude', icon:'🧮', growth:'Quant + Logic'},
+  {name:'Communication Skills', icon:'🗣️', growth:'GD + Speaking'},
+  {name:'Data Structures & Algorithms', icon:'🧩', growth:'Core CS'},
+  {name:'System Design', icon:'🏗️', growth:'Senior-level'},
+  {name:'HR & Behavioral', icon:'🤝', growth:'Soft Skills'},
+  {name:'Resume Building', icon:'📄', growth:'Personal Branding'},
+  {name:'Mock Interviews', icon:'🎤', growth:'Practice'},
+  {name:'Company-Specific Prep', icon:'🏢', growth:'FAANG & More'},
+];
+
+function renderTrending(){
+  const grid = document.getElementById('trendingGrid');
+  grid.innerHTML = TRENDING.map(t=>`
+    <div class="glass tech-card" data-q="${t.name}">
+      <span class="tech-icon">${t.icon}</span>
+      <h4>${t.name}</h4>
+      <div class="growth">${t.growth}</div>
+      <div class="tech-bar"><span style="width:${t.bar}%"></span></div>
+    </div>`).join('');
+  grid.querySelectorAll('.tech-card').forEach(c=>c.addEventListener('click',()=>runSearch(c.dataset.q)));
+
+  document.getElementById('languageGrid').innerHTML = LANGUAGES.map(l=>`
+    <div class="glass tech-card" data-q="${l.name}">
+      <span class="tech-icon">${l.icon}</span>
+      <h4>${l.name}</h4>
+      <div class="growth">View roadmap →</div>
+    </div>`).join('');
+  document.querySelectorAll('#languageGrid .tech-card').forEach(c=>c.addEventListener('click',()=>runSearch(c.dataset.q)));
+
+  document.getElementById('interviewGrid').innerHTML = INTERVIEW_TOPICS.map(t=>`
+    <div class="glass tech-card" data-q="${t.name}">
+      <span class="tech-icon">${t.icon}</span>
+      <h4>${t.name}</h4>
+      <div class="growth">${t.growth}</div>
+    </div>`).join('');
+  document.querySelectorAll('#interviewGrid .tech-card').forEach(c=>c.addEventListener('click',()=>runSearch(c.dataset.q)));
+}
+
+/* ---------- Search + AI ranking ---------- */
+const ALL_SKILLS = Object.keys(SKILL_ROADMAPS).concat(['JavaScript','React','SQL','Cloud Computing','Cybersecurity','DevOps','Go','Rust','C']);
+
+function normalizeSkillName(q){
+  const found = ALL_SKILLS.find(s=>s.toLowerCase()===q.trim().toLowerCase());
+  return found || q.trim();
+}
+
+async function runSearch(query){
+  if(!query || !query.trim()) return;
+  const skill = normalizeSkillName(query);
+  state.currentSkill = skill;
+  document.getElementById('searchInput').value = skill;
+  hideAutocomplete();
+
+  // update recents
+  state.recentSearches = [skill, ...state.recentSearches.filter(s=>s!==skill)].slice(0,6);
+  renderRecent();
+
+  document.getElementById('resultsHeading').textContent = `Results for “${skill}”`;
+  document.getElementById('loader').classList.add('show');
+  document.getElementById('videoGrid').innerHTML = '';
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('aiPickStrip').style.display = 'none';
+
+  let videos;
+  if(state.youtubeApiKey){
+    try{
+      videos = await fetchYouTubeVideos(skill, state.youtubeApiKey);
+    }catch(e){
+      console.warn('YouTube API call failed, falling back to demo data', e);
+      videos = generateDemoVideos(skill);
+    }
+  } else {
+    await new Promise(r=>setTimeout(r, 900)); // simulate AI filtering latency
+    videos = generateDemoVideos(skill);
+  }
+
+  state.lastVideos = videos;
+  document.getElementById('loader').classList.remove('show');
+  renderVideos(videos, state.currentLevel);
+  renderAIPick(videos, skill);
+  renderRoadmap(skill);
+  document.getElementById('search').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* Real YouTube Data API v3 integration.
+   Strategy: search.list restricted to videoCategoryId=27 (Education),
+   then videos.list for contentDetails/statistics to filter out Shorts (<60s)
+   and rank by a blended relevance/view score. */
+async function fetchYouTubeVideos(query, apiKey){
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&videoCategoryId=27&order=relevance&q=${encodeURIComponent(query+' tutorial')}&key=${apiKey}`;
+  const searchRes = await fetch(searchUrl);
+  const searchData = await searchRes.json();
+  if(!searchData.items) throw new Error('No results from YouTube API');
+  const ids = searchData.items.map(i=>i.id.videoId).join(',');
+
+  const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=${ids}&key=${apiKey}`;
+  const detailsRes = await fetch(detailsUrl);
+  const detailsData = await detailsRes.json();
+
+  const parseDuration = (iso)=>{
+    const m = iso.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+    const h = m[1]?parseInt(m[1]):0, mi = m[2]?parseInt(m[2]):0, s = m[3]?parseInt(m[3]):0;
+    return h*3600+mi*60+s;
+  };
+
+  const excludeWords = /(shorts?|reels?|gameplay|funny|prank|meme|reaction|vlog)/i;
+
+  const videos = detailsData.items
+    .filter(v=>{
+      const secs = parseDuration(v.contentDetails.duration);
+      if(secs < 90) return false; // exclude Shorts
+      if(excludeWords.test(v.snippet.title)) return false;
+      return true;
+    })
+    .map(v=>{
+      const secs = parseDuration(v.contentDetails.duration);
+      const mins = Math.floor(secs/60), s = secs%60;
+      const views = parseInt(v.statistics.viewCount||'0');
+      let level = 'beginner';
+      if(/advanced|expert|deep dive|architecture|system design/i.test(v.snippet.title)) level='advanced';
+      else if(/intermediate|practical|project|real[- ]world/i.test(v.snippet.title)) level='intermediate';
+      return {
+        id: v.id, title: v.snippet.title, channel: v.snippet.channelTitle,
+        views, duration: `${mins}:${String(s).padStart(2,'0')}`,
+        thumb: v.snippet.thumbnails.medium.url, level
+      };
+    })
+    .sort((a,b)=>b.views-a.views);
+
+  return videos;
+}
+
+function renderVideos(videos, level){
+  const grid = document.getElementById('videoGrid');
+  const filtered = level==='all' ? videos : videos.filter(v=>v.level===level);
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+  grid.innerHTML = filtered.map(v=>`
+    <div class="glass video-card" data-id="${v.id}">
+      <div class="thumb-wrap">
+        <img src="${v.thumb}" alt="${escapeHtml(v.title)}" loading="lazy">
+        <span class="level-badge level-${v.level}">${v.level}</span>
+        <span class="duration-badge">${v.duration}</span>
+        <div class="play-overlay"><div class="play-circle">▶</div></div>
+      </div>
+      <div class="video-body">
+        <h4>${escapeHtml(v.title)}</h4>
+        <div class="video-meta"><span class="ch">${escapeHtml(v.channel)}</span><span>${formatViews(v.views)}</span></div>
+        <div class="video-actions">
+          <button class="btn btn-primary btn-sm watch-btn" style="flex:1;" data-id="${v.id}">▶ Watch</button>
+          <button class="icon-btn fav-btn" data-id="${v.id}" title="Bookmark">☆</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('.watch-btn, .thumb-wrap').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.id || el.closest('.video-card').dataset.id;
+      openWatchModal(id, filtered);
+    });
+  });
+  grid.querySelectorAll('.fav-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      toggleFavorite(btn.dataset.id, filtered);
+    });
+  });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+}
+
+function renderAIPick(videos, skill){
+  const top5 = videos.slice(0,5);
+  const strip = document.getElementById('aiPickStrip');
+  const totalMins = top5.reduce((sum,v)=>{ const [m,s]=v.duration.split(':').map(Number); return sum + m + s/60; },0);
+  document.getElementById('aiPickText').innerHTML =
+    `AI recommends these <b style="color:var(--text-hi)">top 5 videos</b> for learning <b style="color:var(--cyan)">${escapeHtml(skill)}</b> · estimated learning time: <b style="color:var(--text-hi)">${Math.round(totalMins)} minutes</b>`;
+  strip.style.display = 'flex';
+}
+
+/* level tabs */
+document.getElementById('levelTabs').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab');
+  if(!btn) return;
+  document.querySelectorAll('#levelTabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  state.currentLevel = btn.dataset.level;
+  if(state.lastVideos) renderVideos(state.lastVideos, state.currentLevel);
+});
+
+/* ---------- Roadmap ---------- */
+function renderRoadmap(skill){
+  const steps = SKILL_ROADMAPS[skill] || DEFAULT_ROADMAP;
+  const section = document.getElementById('roadmap-section');
+  document.getElementById('roadmapSkillName').textContent = skill;
+  const estimates = ['3-4 days','1 week','1 week','2 weeks','2-3 weeks','3+ weeks','Ongoing'];
+  document.getElementById('roadmapTrack').innerHTML = steps.map((s,i)=>`
+    <div class="road-step" data-index="${i+1}">
+      <div class="glass road-card">
+        <div class="stage-lbl">Stage ${i+1} of ${steps.length}</div>
+        <h4>${escapeHtml(s)}</h4>
+        <p>${roadmapBlurb(s)}</p>
+        <span class="time-est">⏱ ${estimates[i]||'Flexible'}</span>
+      </div>
+    </div>`).join('');
+  section.style.display = 'block';
+}
+
+function roadmapBlurb(step){
+  const map = {
+    'Interview Questions':'Practice curated interview-style problems and mock rounds for this skill.',
+    'Real Projects':'Apply everything you learned by building a portfolio-ready project.',
+    'Final Mock Interviews':'Full-length simulated interviews with feedback.'
+  };
+  return map[step] || `Focused videos and exercises covering ${step.toLowerCase()}.`;
+}
+
+document.getElementById('shareRoadmapBtn').addEventListener('click', ()=>{
+  const skill = state.currentSkill || 'this skill';
+  const text = `Check out my ${skill} learning roadmap on LearnFocus AI!`;
+  if(navigator.share){
+    navigator.share({title:'LearnFocus AI Roadmap', text}).catch(()=>{});
+  } else {
+    showToast('Roadmap link copied — share it with a friend!');
+  }
+});
+
+/* ---------- Favorites / Watch modal (in-page, focus-mode aware) ---------- */
+function toggleFavorite(id, list){
+  const v = list.find(v=>v.id===id) || (state.favorites.find(f=>f.id===id));
+  if(!v) return;
+  const idx = state.favorites.findIndex(f=>f.id===id);
+  if(idx>-1){ state.favorites.splice(idx,1); showToast('Removed from bookmarks'); }
+  else { state.favorites.push(v); showToast('Bookmarked for later ⭐'); }
+  document.getElementById('favVal').textContent = state.favorites.length;
+  renderFavorites();
+  if(state.lastVideos) renderVideos(state.lastVideos, state.currentLevel);
+  // reflect saved state visually
+  document.querySelectorAll('.fav-btn').forEach(b=>{
+    if(state.favorites.some(f=>f.id===b.dataset.id)){ b.classList.add('saved'); b.textContent='★'; }
+    else { b.classList.remove('saved'); b.textContent='☆'; }
+  });
+}
+
+function renderFavorites(){
+  const el = document.getElementById('favList');
+  if(!state.favorites.length){ el.innerHTML = '<li style="color:var(--text-low); background:none;">No bookmarks yet — tap ☆ on any video.</li>'; return; }
+  el.innerHTML = state.favorites.map(v=>`<li><span>${escapeHtml(v.title.slice(0,38))}${v.title.length>38?'…':''}</span><span class="time">${v.duration}</span></li>`).join('');
+}
+
+function renderRecent(){
+  const el = document.getElementById('recentList');
+  if(!state.recentSearches.length){ el.innerHTML = '<li style="color:var(--text-low); background:none;">Your searches will appear here.</li>'; return; }
+  el.innerHTML = state.recentSearches.map(s=>`<li data-q="${s}" style="cursor:pointer;"><span>${escapeHtml(s)}</span><span class="time">now</span></li>`).join('');
+  el.querySelectorAll('li[data-q]').forEach(li=>li.addEventListener('click',()=>runSearch(li.dataset.q)));
+}
+
+/* Simple in-page "watch" experience: focus-mode compliant (no comments/suggested/shorts) */
+function openWatchModal(id, list){
+  const v = list.find(v=>v.id===id);
+  if(!v) return;
+  state.watched++;
+  document.getElementById('watchedVal').textContent = state.watched;
+  showToast(`Now learning: ${v.title.slice(0,40)}${v.title.length>40?'…':''}`);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------- Progress bars ---------- */
+function renderProgress(){
+  const el = document.getElementById('progressList');
+  el.innerHTML = Object.entries(state.progress).map(([skill,pct])=>`
+    <div class="progress-item">
+      <div class="top"><span>${skill}</span><span>${pct}%</span></div>
+      <div class="pbar"><span style="width:${pct}%"></span></div>
+    </div>`).join('');
+}
+
+/* ---------- Autocomplete ---------- */
+const searchInput = document.getElementById('searchInput');
+const autocompleteEl = document.getElementById('autocomplete');
+function hideAutocomplete(){ autocompleteEl.classList.remove('show'); }
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){ hideAutocomplete(); return; }
+  const matches = ALL_SKILLS.filter(s=>s.toLowerCase().includes(q)).slice(0,6);
+  if(!matches.length){ hideAutocomplete(); return; }
+  autocompleteEl.innerHTML = matches.map(m=>{
+    const idx = m.toLowerCase().indexOf(q);
+    return `<div data-q="${m}">${m.slice(0,idx)}<b>${m.slice(idx,idx+q.length)}</b>${m.slice(idx+q.length)}</div>`;
+  }).join('');
+  autocompleteEl.classList.add('show');
+  autocompleteEl.querySelectorAll('div').forEach(d=>d.addEventListener('click',()=>runSearch(d.dataset.q)));
+});
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.search-shell')) hideAutocomplete();
+});
+searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') runSearch(searchInput.value); });
+document.getElementById('searchBtn').addEventListener('click', ()=>runSearch(searchInput.value));
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click', ()=>runSearch(c.dataset.q)));
+
+/* ---------- Focus mode ---------- */
+const focusToggle = document.getElementById('focusToggle');
+focusToggle.addEventListener('click', ()=>{
+  state.focusMode = !state.focusMode;
+  document.body.classList.toggle('focus-mode', state.focusMode);
+  focusToggle.classList.toggle('on', state.focusMode);
+  showToast(state.focusMode ? 'Focus Learning Mode enabled — distractions hidden' : 'Focus Learning Mode disabled');
+});
+
+/* ---------- Chatbot ---------- */
+const chatFab = document.getElementById('chatFab');
+const chatPanel = document.getElementById('chatPanel');
+chatFab.addEventListener('click', ()=>chatPanel.classList.toggle('open'));
+
+function botReply(text){
+  const lower = text.toLowerCase();
+  const skillMatch = ALL_SKILLS.find(s=>lower.includes(s.toLowerCase()));
+  if(lower.includes('roadmap') && skillMatch){
+    const steps = SKILL_ROADMAPS[skillMatch] || DEFAULT_ROADMAP;
+    return `Here's the roadmap for ${skillMatch}: ${steps.join(' → ')}.`;
+  }
+  if((lower.includes('how long') || lower.includes('time')) && skillMatch){
+    return `Most learners cover ${skillMatch} basics in 2-3 weeks with daily practice, and reach interview-ready level in about 8-10 weeks.`;
+  }
+  if(skillMatch){
+    return `Great choice! I'll pull up curated ${skillMatch} videos and a roadmap for you — check the Search Skills section.`;
+  }
+  if(lower.includes('focus')){
+    return 'Toggle "Focus Mode" in the top navigation to hide comments, suggested videos, Shorts and Reels — only your learning content stays visible.';
+  }
+  return "I can help with roadmaps, learning time estimates, and picking beginner-friendly videos. Try asking “roadmap for Python” or “how long to learn Java?”";
+}
+
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const body = document.getElementById('chatBody');
+  body.insertAdjacentHTML('beforeend', `<div class="msg user">${escapeHtml(text)}</div>`);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  setTimeout(()=>{
+    body.insertAdjacentHTML('beforeend', `<div class="msg bot">${escapeHtml(botReply(text))}</div>`);
+    body.scrollTop = body.scrollHeight;
+  }, 500);
+}
+document.getElementById('chatSend').addEventListener('click', sendChat);
+document.getElementById('chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); });
+
+/* ---------- API key connect ---------- */
+document.getElementById('showKeyRow').addEventListener('click', ()=>{
+  document.getElementById('keyRow').classList.toggle('show');
+});
+document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
+  const val = document.getElementById('apiKeyInput').value.trim();
+  state.youtubeApiKey = val;
+  showToast(val ? 'YouTube API key connected — live results enabled' : 'Running in demo mode');
+});
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ---------- Mobile nav ---------- */
+document.getElementById('burgerBtn').addEventListener('click', ()=>{
+  const nav = document.querySelector('.nav-links');
+  nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+  nav.style.cssText += 'position:absolute; top:72px; left:0; right:0; flex-direction:column; padding:14px 24px; background:rgba(15,23,42,.95); backdrop-filter:blur(16px);';
+});
+
+/* nav active link highlight on click */
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-links a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+
+/* ---------- Init ---------- */
+renderTrending();
+renderFavorites();
+renderRecent();
+renderProgress();
+</script>
+</body>
+</html>
