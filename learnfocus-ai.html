@@ -646,7 +646,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 /* ---------- In-memory state (no localStorage per platform rules) ---------- */
 const state = {
   focusMode: false,
-  youtubeApiKey: '',
+  youtubeApiKey: 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40',
   currentSkill: null,
   currentLevel: 'all',
   recentSearches: [],
@@ -789,9 +789,9 @@ async function runSearch(query){
   document.getElementById('aiPickStrip').style.display = 'none';
 
   let videos;
-  if(state.youtubeApiKey){
+  if(state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40){
     try{
-      videos = await fetchYouTubeVideos(skill, state.youtubeApiKey);
+      videos = await fetchYouTubeVideos(skill, state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40);
     }catch(e){
       console.warn('YouTube API call failed, falling back to demo data', e);
       videos = generateDemoVideos(skill);
@@ -1080,7 +1080,7 @@ document.getElementById('showKeyRow').addEventListener('click', ()=>{
   document.getElementById('keyRow').classList.toggle('show');
 });
 document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
-  const val = document.getElementById('apiKeyInput').value.trim();
+  const val = document.getElementById('AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40').value.trim();
   state.youtubeApiKey = val;
   showToast(val ? 'YouTube API key connected — live results enabled' : 'Running in demo mode');
 });
