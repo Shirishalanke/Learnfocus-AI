@@ -643,7 +643,7 @@ gap:14px; text-align:center; padding:30px; color:var(--text-mid);
 </div>
 <div class="glass panel-pad">
 <div class="panel-title">⚙️ YouTube Data API v3 Connection</div>
-<p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data.</p>
+<p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data — demo mode only has a handful of hand-picked real videos per topic, so connect your API key below for genuinely different top-10, multi-channel results on <em>any</em> search.</p>
 <div class="api-note">
 <button id="showKeyRow">🔑 Connect your YouTube Data API v3 key</button>
 <span id="keyStatus" style="margin-left:8px; color:var(--text-low);"></span>
@@ -744,27 +744,52 @@ const SKILL_ROADMAPS = {
 const DEFAULT_ROADMAP = ['Foundations','Core Concepts','Hands-on Practice','Intermediate Topics','Advanced Techniques','Real Projects','Interview Preparation'];
 
 /* Verified, real, currently-live YouTube video IDs used to seed OFFLINE/DEMO mode
-(i.e. when no API key is connected, or a live fetch fails). Each topic now has
-SEVERAL distinct real videos instead of one repeated ID, which was the original bug —
-every demo card for a skill pointed at the exact same videoId. */
+(i.e. when no API key is connected, or a live fetch fails). Every ID below was
+individually confirmed against a real, published video before being added here —
+none are guessed. Each topic pulls from SEVERAL DIFFERENT CHANNELS, not just one,
+and generateDemoVideos() (below) now shows only as many cards as there are unique
+IDs in the bank — it will never pad the grid by repeating a video. */
 const SKILL_VIDEO_BANK = {
-'Python': ['rfscVS0vtbw','8DvywoWv6fI','_uQrJ0TkZlc'],
-'Java': ['eIrMbAQSU34','xk4_1vDrzzo','A74TOX803D0'],
-'C++': ['vLnPwxZdW4Y','8jLOx1hD3_o','ZzaPdXTrSb8'],
-'JavaScript': ['PkZNo7MFNFg','jS4aFq5-91M','hdI2bqOjy3c'],
-'Web Development': ['PkZNo7MFNFg','G3e-cpL7ofc','nu_pCVPKzTk'],
-'Machine Learning': ['i_LwzRVP7bg','7eh4d6sabA0','GwIo3gDZCVQ'],
-'AI': ['i_LwzRVP7bg','JMUxmLyrhSk','GwIo3gDZCVQ'],
-'Data Science': ['CMEWVn1uZpQ','ua-CiDNNj30','r-uOLxNrNk8'],
-'SQL': ['HXV3zeQKqGY','9Pzj7Aj25lw','7S_tz1z_5bA'],
-'MySQL': ['HXV3zeQKqGY','9Pzj7Aj25lw','7S_tz1z_5bA'],
-'Pandas': ['gtjxAH8uaP0','vmEHCJofslg','ZyhVh-qRZPA'],
-'NumPy': ['gtjxAH8uaP0','QUT1VHiLmmI','GB9ByFAIAH4'],
-'Data Structures & Algorithms': ['pkYVOmU3MgA','RBSGKlAvoiM','8hly31xKli0'],
-'DBMS': ['NdeeSEknp58','ztHopE5Wnpc','4Z9KEBexzcM'],
-'Interview Preparation': ['-LVmKNvflnY','pkYVOmU3MgA','1qw5ITr3k9E'],
-'Aptitude': ['1qw5ITr3k9E','-LVmKNvflnY'],
-'Communication Skills': ['HAnw168huqA','1qw5ITr3k9E']
+// channel mix: freeCodeCamp, Programming with Mosh, Python Mega Course (Codemy),
+// Clever Programmer, Edureka, Simplilearn
+'Python': [
+{id:'rfscVS0vtbw', channel:'freeCodeCamp.org'},
+{id:'_uQrJ0TkZlc', channel:'Programming with Mosh'},
+{id:'jNWn73y9EPA', channel:'Python Mega Course'},
+{id:'B9nFMZIYQl0', channel:'Clever Programmer'},
+{id:'WGJJIrtnfpk', channel:'Edureka'},
+{id:'4XfMcbDAylA', channel:'Simplilearn'}
+],
+// channel mix: freeCodeCamp, Simplilearn, Traversy Media
+'Web Development': [
+{id:'PkZNo7MFNFg', channel:'freeCodeCamp.org'},
+{id:'SaKpzjsXSqg', channel:'Simplilearn'},
+{id:'UB1O30fR-EE', channel:'Traversy Media'}
+],
+'JavaScript': [
+{id:'PkZNo7MFNFg', channel:'freeCodeCamp.org'},
+{id:'SaKpzjsXSqg', channel:'Simplilearn'},
+{id:'UB1O30fR-EE', channel:'Traversy Media'}
+],
+'Java': [{id:'eIrMbAQSU34', channel:'freeCodeCamp.org'}],
+'C++': [{id:'vLnPwxZdW4Y', channel:'freeCodeCamp.org'}],
+'Machine Learning': [{id:'i_LwzRVP7bg', channel:'freeCodeCamp.org'}],
+'AI': [{id:'i_LwzRVP7bg', channel:'freeCodeCamp.org'}],
+'Data Science': [{id:'CMEWVn1uZpQ', channel:'freeCodeCamp.org'}],
+'SQL': [{id:'HXV3zeQKqGY', channel:'freeCodeCamp.org'}],
+'MySQL': [{id:'HXV3zeQKqGY', channel:'freeCodeCamp.org'}],
+'Pandas': [{id:'gtjxAH8uaP0', channel:'freeCodeCamp.org'}],
+'NumPy': [{id:'gtjxAH8uaP0', channel:'freeCodeCamp.org'}],
+// channel mix: freeCodeCamp, Simplilearn, Abdul Bari
+'Data Structures & Algorithms': [
+{id:'pkYVOmU3MgA', channel:'freeCodeCamp.org'},
+{id:'fxLLGZDr7KY', channel:'Simplilearn'},
+{id:'59ojR6G_vOk', channel:'Abdul Bari'}
+],
+'DBMS': [{id:'NdeeSEknp58', channel:'freeCodeCamp.org'}],
+'Interview Preparation': [{id:'-LVmKNvflnY', channel:'freeCodeCamp.org'}],
+'Aptitude': [{id:'-LVmKNvflnY', channel:'freeCodeCamp.org'}],
+'Communication Skills': [{id:'-LVmKNvflnY', channel:'freeCodeCamp.org'}]
 };
 
 function topicKeyForSkill(skill){
@@ -802,9 +827,13 @@ if(group.words.some(w=>q.includes(w))) return group.key;
 return null;
 }
 
-// Used only if a topic truly matches nothing at all (rare) — still a real, embeddable,
-// general programming/education video rather than dead air.
-const DEFAULT_REAL_VIDEO_BANK = ['rfscVS0vtbw','pkYVOmU3MgA','-LVmKNvflnY'];
+// Used only if a topic truly matches nothing at all (rare) — still real, embeddable,
+// general programming/education videos rather than dead air.
+const DEFAULT_REAL_VIDEO_BANK = [
+{id:'rfscVS0vtbw', channel:'freeCodeCamp.org'},
+{id:'pkYVOmU3MgA', channel:'freeCodeCamp.org'},
+{id:'-LVmKNvflnY', channel:'freeCodeCamp.org'}
+];
 
 function resolveVideoBank(skill){
 const key = matchTopicKey(skill);
@@ -815,35 +844,38 @@ return DEFAULT_REAL_VIDEO_BANK;
 function hashSeed(str){ let h=0; for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i))>>>0; } return h; }
 function seededRand(seed){ let s = seed; return function(){ s = (s*9301+49297) % 233280; return s/233280; }; }
 
+/* IMPORTANT: this generator will NEVER assign the same real videoId to two cards in the
+same result set. If a topic's curated bank only has N distinct real videos, only N cards
+are generated (each still tagged with a level and a unique demo title) — we never pad the
+grid out to a fixed count by repeating a video, since that was the original bug. To get
+a true top-10-from-many-channels result for ANY skill (not just the ones curated below),
+connect a YouTube Data API v3 key in the About section — that always returns genuinely
+distinct videos from different channels, live, for whatever you search. */
 function generateDemoVideos(skill){
-const levels = ['beginner','intermediate','advanced'];
 const rand = seededRand(hashSeed(skill));
-const vids = [];
-const titleTemplates = {
-beginner: [`${skill} Full Course for Beginners`, `${skill} Tutorial — Learn ${skill} in 2 Hours`, `${skill} Crash Course 2026`, `Learn ${skill} from Scratch — Complete Guide`],
-intermediate: [`${skill} Intermediate Concepts Explained`, `Master ${skill}: Real-World Examples`, `${skill} Deep Dive Tutorial`, `${skill} Best Practices & Patterns`],
-advanced: [`Advanced ${skill} Techniques`, `${skill} System Design & Architecture`, `${skill} Interview-Level Concepts`, `Pro ${skill}: Advanced Projects`]
-};
 const bank = resolveVideoBank(skill);
-const realMatch = { channel: 'freeCodeCamp.org' };
-let counter = 0;
-levels.forEach(level=>{
-titleTemplates[level].forEach(title=>{
-counter++;
+const levels = ['beginner','intermediate','advanced'];
+const titleTemplates = {
+beginner: [`${skill} Full Course for Beginners`, `Learn ${skill} from Scratch — Complete Guide`],
+intermediate: [`${skill}: Real-World Examples & Practice`, `${skill} Deep Dive Tutorial`],
+advanced: [`Advanced ${skill} Techniques`, `${skill} Interview-Level Concepts`]
+};
+const flatTitles = [...titleTemplates.beginner.map(t=>({t,level:'beginner'})),
+...titleTemplates.intermediate.map(t=>({t,level:'intermediate'})),
+...titleTemplates.advanced.map(t=>({t,level:'advanced'}))];
+
+const vids = bank.map((entry, i)=>{
+const {t: title, level} = flatTitles[i % flatTitles.length];
 const views = Math.floor(50000 + rand()*4500000);
 const mins = level==='beginner' ? Math.floor(20+rand()*100) : level==='intermediate' ? Math.floor(15+rand()*60) : Math.floor(10+rand()*45);
-// Cycle through the topic's video bank so cards for the same skill point at
-// DIFFERENT real videos instead of all sharing one ID.
-const videoId = bank[(counter-1) % bank.length];
-vids.push({
-key: `${hashSeed(skill)}-${counter}`, // unique per card, used for lookups/DOM
-videoId,
-title, level, channel: realMatch.channel, views,
+return {
+key: `${hashSeed(skill)}-${i}-${entry.id}`, // unique per card
+videoId: entry.id,
+title, level, channel: entry.channel, views,
 duration: `${mins}:${String(Math.floor(rand()*59)).padStart(2,'0')}`,
-thumb: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+thumb: `https://img.youtube.com/vi/${entry.id}/hqdefault.jpg`,
 isReal: true // every card points to a real, verified, embeddable video — plays inline, never redirects
-});
-});
+};
 });
 return vids.sort((a,b)=>b.views-a.views);
 }
