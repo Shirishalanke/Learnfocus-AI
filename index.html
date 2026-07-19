@@ -380,6 +380,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 .video-modal-overlay.open{ display:flex; }
 .video-modal{
   width:100%; max-width:860px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6);
+  max-height:88vh; display:flex; flex-direction:column;
 }
 .video-modal-head{
   display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
@@ -391,7 +392,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
   color:var(--text-hi); flex-shrink:0; font-size:15px; display:flex; align-items:center; justify-content:center;
 }
 .video-modal-close:hover{ border-color:var(--cyan); color:var(--cyan); }
-.video-modal-body{ position:relative; width:100%; aspect-ratio:16/9; background:#000; }
+.video-modal-body{ position:relative; width:100%; aspect-ratio:16/9; background:#000; flex-shrink:0; }
 .video-modal-body iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 .video-modal-fallback{
   position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -400,6 +401,20 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 .video-modal-fallback .big{ font-size:30px; }
 .video-modal-fallback p{ font-size:13.5px; max-width:400px; line-height:1.6; }
 .video-modal-foot{ padding:12px 18px; font-size:12px; color:var(--text-low); border-top:1px solid var(--panel-border); }
+
+/* Recommended-videos-below-player panel */
+.video-modal-recs{ padding:16px 18px; overflow-y:auto; border-top:1px solid var(--panel-border); }
+.video-modal-recs .recs-title{ font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-low); margin-bottom:12px; }
+.recs-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.rec-card{ cursor:pointer; border-radius:10px; overflow:hidden; border:1px solid var(--panel-border); background:rgba(255,255,255,.03); transition:.2s; }
+.rec-card:hover{ border-color:var(--cyan); transform:translateY(-2px); }
+.rec-thumb{ position:relative; aspect-ratio:16/9; background:#0b1220; }
+.rec-thumb img{ width:100%; height:100%; object-fit:cover; }
+.rec-thumb .lvl{ position:absolute; top:5px; left:5px; font-size:9px; font-family:var(--font-mono); text-transform:uppercase; padding:2px 6px; border-radius:999px; }
+.rec-body{ padding:8px 10px; }
+.rec-body h5{ font-size:12px; font-weight:600; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:32px; }
+.rec-body span{ font-size:10.5px; color:var(--text-mid); font-family:var(--font-mono); }
+@media (max-width:720px){ .recs-grid{ grid-template-columns:repeat(2,1fr); } }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 980px){
@@ -454,7 +469,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
     <div class="search-shell">
       <div class="glass-strong search-box">
         <span class="search-icon">⌕</span>
-        <input type="text" id="searchInput" placeholder="Try “Python”, “Machine Learning”, “Interview Preparation”…" autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Try “Python”, “MySQL”, “Pandas”, “Interview Preparation”…" autocomplete="off">
         <button class="btn btn-primary" id="searchBtn">Search</button>
       </div>
       <div class="autocomplete glass-strong" id="autocomplete"></div>
@@ -462,9 +477,12 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
         <button class="chip" data-q="Python">Python</button>
         <button class="chip" data-q="Java">Java</button>
         <button class="chip" data-q="C++">C++</button>
+        <button class="chip" data-q="MySQL">MySQL</button>
+        <button class="chip" data-q="Pandas">Pandas</button>
         <button class="chip" data-q="Data Science">Data Science</button>
         <button class="chip" data-q="Machine Learning">Machine Learning</button>
         <button class="chip" data-q="Web Development">Web Development</button>
+        <button class="chip" data-q="Data Structures & Algorithms">DSA</button>
         <button class="chip" data-q="Interview Preparation">Interview Prep</button>
         <button class="chip" data-q="Aptitude">Aptitude</button>
         <button class="chip" data-q="Communication Skills">Communication Skills</button>
@@ -525,7 +543,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
     <div class="video-grid" id="videoGrid"></div>
     <div class="empty-state" id="emptyState">
       <div class="big">🎯</div>
-      <p>Try “Python”, “Machine Learning” or any skill above — LearnFocus AI will fetch only the best educational videos.</p>
+      <p>Try “Python”, “MySQL”, “Pandas” or any skill above — LearnFocus AI will fetch only the best educational videos.</p>
     </div>
   </div>
 </section>
@@ -630,7 +648,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
         <button id="showKeyRow">🔑 Connect your YouTube Data API v3 key (optional)</button>
       </div>
       <div class="key-row" id="keyRow">
-        <input type="text" id="apiKeyInput" placeholder="AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40">
+        <input type="text" id="AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40" placeholder="Paste your YouTube Data API v3 key">
         <button class="btn btn-primary btn-sm" id="saveKeyBtn">Save</button>
       </div>
     </div>
@@ -674,6 +692,10 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
     </div>
     <div class="video-modal-body" id="videoModalBody"></div>
     <div class="video-modal-foot" id="videoModalFoot"></div>
+    <div class="video-modal-recs" id="videoModalRecs" style="display:none;">
+      <div class="recs-title">📚 Keep learning — recommended next</div>
+      <div class="recs-grid" id="recsGrid"></div>
+    </div>
   </div>
 </div>
 
@@ -687,7 +709,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 /* ---------- In-memory state (no localStorage per platform rules) ---------- */
 const state = {
   focusMode: false,
-  youtubeApiKey: 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40', // paste a real YouTube Data API v3 key via the About section to enable live playback
+  youtubeApiKey: 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40', // paste a real YouTube Data API v3 key via the About section to enable live search
   currentSkill: null,
   currentLevel: 'all',
   recentSearches: [],
@@ -706,14 +728,20 @@ const SKILL_ROADMAPS = {
   'AI': ['Math Foundations (Linear Algebra)','Python for AI','Machine Learning Basics','Neural Networks','Deep Learning Frameworks','AI Projects','Interview Questions'],
   'Machine Learning': ['Python & Statistics Refresher','Supervised Learning','Unsupervised Learning','Model Evaluation','Feature Engineering','ML Projects','Interview Questions'],
   'Web Development': ['HTML & CSS Basics','JavaScript Fundamentals','Responsive Design','Frontend Framework (React)','Backend & APIs','Full Stack Project','Interview Questions'],
+  'MySQL': ['Database & SQL Basics','Installing MySQL','Tables, Keys & Constraints','Queries: Insert/Update/Delete','Joins & Subqueries','Indexes & Views','Interview Questions'],
+  'SQL': ['Database & SQL Basics','Installing MySQL','Tables, Keys & Constraints','Queries: Insert/Update/Delete','Joins & Subqueries','Indexes & Views','Interview Questions'],
+  'Pandas': ['Python Refresher','Series & DataFrames','Reading & Cleaning Data','Filtering & Grouping','Merging & Reshaping','Real Data Projects','Interview Questions'],
+  'NumPy': ['Python Refresher','Arrays & Vectorization','Indexing & Slicing','Broadcasting','Linear Algebra Ops','Data Projects','Interview Questions'],
+  'Data Structures & Algorithms': ['Big-O & Complexity','Arrays & Strings','Linked Lists & Stacks/Queues','Trees & Graphs','Sorting & Searching','Dynamic Programming','Interview Questions'],
   'Interview Preparation': ['Resume & Profile Setup','Aptitude & Reasoning','Core Subject Revision','Mock Technical Rounds','System Design Basics','Behavioral Rounds','Final Mock Interviews'],
   'Aptitude': ['Number Systems','Percentages & Ratios','Time, Speed & Work','Logical Reasoning','Data Interpretation','Puzzles','Timed Mock Tests'],
   'Communication Skills': ['Foundations of Clear Speech','Vocabulary Building','Public Speaking Basics','Body Language','Group Discussions','Mock Interviews','Advanced Presentation Skills']
 };
 const DEFAULT_ROADMAP = ['Foundations','Core Concepts','Hands-on Practice','Intermediate Topics','Advanced Techniques','Real Projects','Interview Preparation'];
 
-/* Verified, real, currently-live YouTube video IDs (freeCodeCamp full courses) used as stand-ins
-   in demo mode so "Watch" always plays something real, embedded on this page — never a redirect. */
+/* Verified, real, currently-live YouTube video IDs (freeCodeCamp full courses, mostly)
+   used so every search — even ones we don't have an exact card for — plays a real,
+   topically-relevant, embeddable video instead of an unrelated generic fallback. */
 const SKILL_VIDEO_MAP = {
   'Python': { id: 'rfscVS0vtbw', channel: 'freeCodeCamp.org' },
   'Java': { id: 'eIrMbAQSU34', channel: 'freeCodeCamp.org' },
@@ -724,11 +752,51 @@ const SKILL_VIDEO_MAP = {
   'Machine Learning': { id: 'i_LwzRVP7bg', channel: 'freeCodeCamp.org' },
   'AI': { id: 'i_LwzRVP7bg', channel: 'freeCodeCamp.org' },
   'Data Science': { id: 'CMEWVn1uZpQ', channel: 'freeCodeCamp.org' },
-  'SQL': { id: 'HXV3zeQKqGY', channel: 'freeCodeCamp.org' }
+  'SQL': { id: 'HXV3zeQKqGY', channel: 'freeCodeCamp.org' },
+  'MySQL': { id: 'HXV3zeQKqGY', channel: 'freeCodeCamp.org' },
+  'Pandas': { id: 'gtjxAH8uaP0', channel: 'freeCodeCamp.org' },
+  'NumPy': { id: 'gtjxAH8uaP0', channel: 'freeCodeCamp.org' },
+  'Data Structures & Algorithms': { id: 'pkYVOmU3MgA', channel: 'freeCodeCamp.org' },
+  'DSA': { id: 'pkYVOmU3MgA', channel: 'freeCodeCamp.org' }
 };
-// Any skill not in the map above still plays a real, verified general programming tutorial
-// inline — nothing ever redirects off-site, even if it isn't a perfect topic match.
+
+/* Keyword groups: lets ANY search term (MySQL, Pandas, Postgres, Excel, DSA, aptitude, etc.)
+   route to the closest topically-relevant real video instead of a one-size-fits-all fallback. */
+const TOPIC_KEYWORD_GROUPS = [
+  { key:'MySQL',        words:['mysql','sql','database','postgres','postgresql','mongodb','nosql','db ','rdbms'] },
+  { key:'Pandas',       words:['pandas','numpy','data analysis','data cleaning','excel','tableau','power bi','data visualization','matplotlib','seaborn'] },
+  { key:'Data Science', words:['data science','statistics','statistical','data scientist'] },
+  { key:'Machine Learning', words:['machine learning','deep learning','neural network','ai','artificial intelligence','tensorflow','pytorch','nlp','computer vision'] },
+  { key:'Data Structures & Algorithms', words:['data structure','algorithm','dsa','leetcode','big o','competitive programming'] },
+  { key:'Python',       words:['python','django','flask','pip'] },
+  { key:'Java',         words:['java ','java,','spring','jvm','kotlin'] },
+  { key:'C++',          words:['c++','cpp','competitive coding'] },
+  { key:'Web Development', words:['html','css','javascript','react','node','frontend','front-end','backend','back-end','full stack','fullstack','web dev','typescript','php','angular','vue'] },
+  { key:'Interview Preparation', words:['interview','resume','hr round','job prep','placement'] },
+  { key:'Aptitude',     words:['aptitude','reasoning','quantitative','logical'] },
+  { key:'Communication Skills', words:['communication','public speaking','soft skill','presentation skill','group discussion','spoken english'] }
+];
+
+function matchTopicKey(query){
+  const q = (' '+query.toLowerCase()+' ');
+  // exact catalog match first
+  const exact = Object.keys(SKILL_VIDEO_MAP).find(k=>k.toLowerCase()===query.trim().toLowerCase());
+  if(exact) return exact;
+  for(const group of TOPIC_KEYWORD_GROUPS){
+    if(group.words.some(w=>q.includes(w))) return group.key;
+  }
+  return null;
+}
+
+// Only used if a topic truly matches nothing at all (rare) — still a real, embeddable,
+// general programming/education video rather than dead air.
 const DEFAULT_REAL_VIDEO = { id: 'rfscVS0vtbw', channel: 'freeCodeCamp.org' };
+
+function resolveRealVideo(skill){
+  const key = matchTopicKey(skill);
+  if(key && SKILL_VIDEO_MAP[key]) return SKILL_VIDEO_MAP[key];
+  return DEFAULT_REAL_VIDEO;
+}
 
 function hashSeed(str){ let h=0; for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i))>>>0; } return h; }
 function seededRand(seed){ let s = seed; return function(){ s = (s*9301+49297) % 233280; return s/233280; }; }
@@ -742,19 +810,20 @@ function generateDemoVideos(skill){
     intermediate: [`${skill} Intermediate Concepts Explained`, `Master ${skill}: Real-World Examples`, `${skill} Deep Dive Tutorial`, `${skill} Best Practices & Patterns`],
     advanced: [`Advanced ${skill} Techniques`, `${skill} System Design & Architecture`, `${skill} Interview-Level Concepts`, `Pro ${skill}: Advanced Projects`]
   };
-  const realMatch = SKILL_VIDEO_MAP[skill] || DEFAULT_REAL_VIDEO;
-  let id = 0;
+  const realMatch = resolveRealVideo(skill);
+  let counter = 0;
   levels.forEach(level=>{
     titleTemplates[level].forEach(title=>{
-      id++;
+      counter++;
       const views = Math.floor(50000 + rand()*4500000);
       const mins = level==='beginner' ? Math.floor(20+rand()*100) : level==='intermediate' ? Math.floor(15+rand()*60) : Math.floor(10+rand()*45);
       vids.push({
-        id: realMatch.id,
+        key: `${hashSeed(skill)}-${counter}`, // unique per card, used for lookups/DOM
+        videoId: realMatch.id,                // shared real YouTube id used for embedding/thumbnail
         title, level, channel: realMatch.channel, views,
         duration: `${mins}:${String(Math.floor(rand()*59)).padStart(2,'0')}`,
         thumb: `https://img.youtube.com/vi/${realMatch.id}/hqdefault.jpg`,
-        isReal: true // every card now points to a real, verified, embeddable video — plays inline, never redirects
+        isReal: true // every card points to a real, verified, embeddable video — plays inline, never redirects
       });
     });
   });
@@ -773,14 +842,14 @@ const TRENDING = [
   {name:'Machine Learning', icon:'🤖', growth:'+51% demand', bar:85},
   {name:'Data Science', icon:'📊', growth:'+47% demand', bar:80},
   {name:'Web Development', icon:'🌐', growth:'+38% demand', bar:75},
-  {name:'Cloud Computing', icon:'☁️', growth:'+42% demand', bar:78},
+  {name:'MySQL', icon:'🗄️', growth:'+45% demand', bar:79},
+  {name:'Pandas', icon:'🐼', growth:'+50% demand', bar:82},
   {name:'Cybersecurity', icon:'🛡️', growth:'+55% demand', bar:88},
   {name:'Python', icon:'🐍', growth:'+60% demand', bar:90},
-  {name:'DevOps', icon:'⚙️', growth:'+33% demand', bar:70},
 ];
 const LANGUAGES = [
   {name:'Python', icon:'🐍'}, {name:'Java', icon:'☕'}, {name:'C++', icon:'➕'}, {name:'JavaScript', icon:'📜'},
-  {name:'Go', icon:'🐹'}, {name:'Rust', icon:'⚙️'}, {name:'C', icon:'🔧'}, {name:'SQL', icon:'🗄️'}
+  {name:'MySQL', icon:'🗄️'}, {name:'Pandas', icon:'🐼'}, {name:'NumPy', icon:'🔢'}, {name:'SQL', icon:'🧮'}
 ];
 const INTERVIEW_TOPICS = [
   {name:'Aptitude', icon:'🧮', growth:'Quant + Logic'},
@@ -822,7 +891,7 @@ function renderTrending(){
 }
 
 /* ---------- Search + AI ranking ---------- */
-const ALL_SKILLS = Object.keys(SKILL_ROADMAPS).concat(['JavaScript','React','SQL','Cloud Computing','Cybersecurity','DevOps','Go','Rust','C']);
+const ALL_SKILLS = Object.keys(SKILL_ROADMAPS).concat(['JavaScript','React','SQL','Cloud Computing','Cybersecurity','DevOps','Go','Rust','C','Excel','Tableau','Power BI','MongoDB','Docker','Git','AWS']);
 
 function normalizeSkillName(q){
   const found = ALL_SKILLS.find(s=>s.toLowerCase()===q.trim().toLowerCase());
@@ -847,9 +916,9 @@ async function runSearch(query){
   document.getElementById('aiPickStrip').style.display = 'none';
 
   let videos;
-  if(state.youtubeApiKey){
+  if(state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40){
     try{
-      videos = await fetchYouTubeVideos(skill, state.youtubeApiKey);
+      videos = await fetchYouTubeVideos(skill, state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40);
     }catch(e){
       console.warn('YouTube API call failed, falling back to demo data', e);
       showToast('Live YouTube fetch failed — showing demo results instead');
@@ -872,14 +941,14 @@ async function runSearch(query){
    Strategy: search.list restricted to videoCategoryId=27 (Education),
    then videos.list for contentDetails/statistics to filter out Shorts (<60s)
    and rank by a blended relevance/view score. */
-async function fetchYouTubeVideos(query, apiKey){
-  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&videoCategoryId=27&order=relevance&q=${encodeURIComponent(query+' tutorial')}&key=${AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40}`;
+async function fetchYouTubeVideos(query, AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40){
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=24&type=video&videoCategoryId=27&order=relevance&q=${encodeURIComponent(query+' tutorial')}&key=${encodeURIComponent(AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40)}`;
   const searchRes = await fetch(searchUrl);
   const searchData = await searchRes.json();
   if(!searchData.items) throw new Error('No results from YouTube API');
   const ids = searchData.items.map(i=>i.id.videoId).join(',');
 
-  const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=${ids}&key=${apiKey}`;
+  const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=${ids}&key=${encodeURIComponent(AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40)}`;
   const detailsRes = await fetch(detailsUrl);
   const detailsData = await detailsRes.json();
 
@@ -906,7 +975,7 @@ async function fetchYouTubeVideos(query, apiKey){
       if(/advanced|expert|deep dive|architecture|system design/i.test(v.snippet.title)) level='advanced';
       else if(/intermediate|practical|project|real[- ]world/i.test(v.snippet.title)) level='intermediate';
       return {
-        id: v.id, title: v.snippet.title, channel: v.snippet.channelTitle,
+        key: v.id, videoId: v.id, title: v.snippet.title, channel: v.snippet.channelTitle,
         views, duration: `${mins}:${String(s).padStart(2,'0')}`,
         thumb: v.snippet.thumbnails.medium.url, level,
         isReal: true // came straight from the YouTube Data API — safe to embed and play
@@ -922,7 +991,7 @@ function renderVideos(videos, level){
   const filtered = level==='all' ? videos : videos.filter(v=>v.level===level);
   document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
   grid.innerHTML = filtered.map(v=>`
-    <div class="glass video-card" data-id="${v.id}">
+    <div class="glass video-card" data-key="${v.key}">
       <div class="thumb-wrap">
         <img src="${v.thumb}" alt="${escapeHtml(v.title)}" loading="lazy">
         <span class="level-badge level-${v.level}">${v.level}</span>
@@ -933,22 +1002,22 @@ function renderVideos(videos, level){
         <h4>${escapeHtml(v.title)}</h4>
         <div class="video-meta"><span class="ch">${escapeHtml(v.channel)}</span><span>${formatViews(v.views)}</span></div>
         <div class="video-actions">
-          <button class="btn btn-primary btn-sm watch-btn" style="flex:1;" data-id="${v.id}">▶ Watch</button>
-          <button class="icon-btn fav-btn" data-id="${v.id}" title="Bookmark">☆</button>
+          <button class="btn btn-primary btn-sm watch-btn" style="flex:1;" data-key="${v.key}">▶ Watch</button>
+          <button class="icon-btn fav-btn" data-key="${v.key}" title="Bookmark">☆</button>
         </div>
       </div>
     </div>`).join('');
 
   grid.querySelectorAll('.watch-btn, .thumb-wrap').forEach(el=>{
     el.addEventListener('click', ()=>{
-      const id = el.dataset.id || el.closest('.video-card').dataset.id;
-      openWatchModal(id, filtered);
+      const key = el.dataset.key || el.closest('.video-card').dataset.key;
+      openWatchModal(key, filtered);
     });
   });
   grid.querySelectorAll('.fav-btn').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
       e.stopPropagation();
-      toggleFavorite(btn.dataset.id, filtered);
+      toggleFavorite(btn.dataset.key, filtered);
     });
   });
 }
@@ -1014,10 +1083,10 @@ document.getElementById('shareRoadmapBtn').addEventListener('click', ()=>{
 });
 
 /* ---------- Favorites / Watch modal (in-page, focus-mode aware) ---------- */
-function toggleFavorite(id, list){
-  const v = list.find(v=>v.id===id) || (state.favorites.find(f=>f.id===id));
+function toggleFavorite(key, list){
+  const v = list.find(v=>v.key===key) || (state.favorites.find(f=>f.key===key));
   if(!v) return;
-  const idx = state.favorites.findIndex(f=>f.id===id);
+  const idx = state.favorites.findIndex(f=>f.key===key);
   if(idx>-1){ state.favorites.splice(idx,1); showToast('Removed from bookmarks'); }
   else { state.favorites.push(v); showToast('Bookmarked for later ⭐'); }
   document.getElementById('favVal').textContent = state.favorites.length;
@@ -1025,7 +1094,7 @@ function toggleFavorite(id, list){
   if(state.lastVideos) renderVideos(state.lastVideos, state.currentLevel);
   // reflect saved state visually
   document.querySelectorAll('.fav-btn').forEach(b=>{
-    if(state.favorites.some(f=>f.id===b.dataset.id)){ b.classList.add('saved'); b.textContent='★'; }
+    if(state.favorites.some(f=>f.key===b.dataset.key)){ b.classList.add('saved'); b.textContent='★'; }
     else { b.classList.remove('saved'); b.textContent='☆'; }
   });
 }
@@ -1043,14 +1112,16 @@ function renderRecent(){
   el.querySelectorAll('li[data-q]').forEach(li=>li.addEventListener('click',()=>runSearch(li.dataset.q)));
 }
 
-/* ---------- Watch modal: real playback for API-sourced videos, honest fallback for demo data ---------- */
+/* ---------- Watch modal: real playback + recommended-videos-below-the-player ---------- */
 const videoModalOverlay = document.getElementById('videoModalOverlay');
 const videoModalBody = document.getElementById('videoModalBody');
 const videoModalTitle = document.getElementById('videoModalTitle');
 const videoModalFoot = document.getElementById('videoModalFoot');
+const videoModalRecs = document.getElementById('videoModalRecs');
+const recsGrid = document.getElementById('recsGrid');
 
-function openWatchModal(id, list){
-  const v = list.find(v=>v.id===id);
+function openWatchModal(key, list){
+  const v = list.find(v=>v.key===key);
   if(!v) return;
 
   state.watched++;
@@ -1059,22 +1130,47 @@ function openWatchModal(id, list){
   videoModalTitle.textContent = v.title;
 
   if(v.isReal){
-    // Every demo (and live-API) video now resolves to a real YouTube ID — embed and autoplay
-    // it directly inside this page. Nothing ever opens a new tab or leaves the site.
-    videoModalBody.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=1&rel=0" title="${escapeHtml(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    // Every video now resolves to a real YouTube ID — embed and autoplay it directly
+    // inside this page. Nothing ever opens a new tab or leaves the site.
+    videoModalBody.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.videoId)}?autoplay=1&rel=0" title="${escapeHtml(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
     videoModalFoot.textContent = `${v.channel} · ${formatViews(v.views)} · ${v.duration}`;
   } else {
-    // Safety net only — should not normally be reached, since every video is now marked isReal.
+    // Safety net only — should not normally be reached, since every video is marked isReal.
     videoModalBody.innerHTML = `<div class="video-modal-fallback"><div class="big">⚠️</div><p>This video couldn't be loaded right now. Try another card, or connect a YouTube Data API v3 key in the About section for full live results.</p></div>`;
     videoModalFoot.textContent = `${v.channel} · ${formatViews(v.views)} · ${v.duration}`;
   }
 
+  renderRecommended(v, list);
   videoModalOverlay.classList.add('open');
+}
+
+/* Shows a "keep learning" strip below the player — same skill, other levels included,
+   so the person always has an obvious educational next step instead of an open feed. */
+function renderRecommended(current, list){
+  const rest = list.filter(v=>v.key!==current.key);
+  const nextUp = rest.slice(0, 6);
+  if(!nextUp.length){ videoModalRecs.style.display = 'none'; return; }
+  recsGrid.innerHTML = nextUp.map(v=>`
+    <div class="rec-card" data-key="${v.key}">
+      <div class="rec-thumb">
+        <img src="${v.thumb}" alt="${escapeHtml(v.title)}" loading="lazy">
+        <span class="lvl level-${v.level}">${v.level}</span>
+      </div>
+      <div class="rec-body">
+        <h5>${escapeHtml(v.title)}</h5>
+        <span>${v.duration}</span>
+      </div>
+    </div>`).join('');
+  recsGrid.querySelectorAll('.rec-card').forEach(card=>{
+    card.addEventListener('click', ()=> openWatchModal(card.dataset.key, list));
+  });
+  videoModalRecs.style.display = 'block';
 }
 
 function closeWatchModal(){
   videoModalOverlay.classList.remove('open');
   videoModalBody.innerHTML = ''; // stop any playing iframe immediately
+  videoModalRecs.style.display = 'none';
 }
 
 document.getElementById('videoModalClose').addEventListener('click', closeWatchModal);
@@ -1169,7 +1265,7 @@ document.getElementById('showKeyRow').addEventListener('click', ()=>{
 });
 document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
   const val = document.getElementById('AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40').value.trim();
-  state.youtubeApiKey = val;
+  state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40 = val;
   showToast(val ? 'API key saved — your next search will fetch live, playable videos' : 'API key cleared — back to demo mode');
 });
 
