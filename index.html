@@ -598,7 +598,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
       <div class="panel-title">⚙️ YouTube Data API v3 Connection</div>
       <p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data.</p>
       <div class="api-note">
-        <button id="showKeyRow">＋ Connect your own YouTube API key</button>
+        <button id="showKeyRow">AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40</button>
       </div>
       <div class="key-row" id="keyRow">
         <input type="text" id="apiKeyInput" placeholder="Paste YouTube Data API v3 key…">
@@ -1082,7 +1082,7 @@ document.getElementById('showKeyRow').addEventListener('click', ()=>{
 document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
   const val = document.getElementById('AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40').value.trim();
   state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40= val;
-  showToast(val ? 'YouTube API key connected — live results enabled' : 'Running in demo mode');
+  showToast(val ? 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40' : '');
 });
 
 /* ---------- Toast ---------- */
