@@ -372,6 +372,35 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 .key-row.show{ display:flex; }
 .key-row input{ flex:1; background:rgba(255,255,255,.04); border:1px solid var(--panel-border); border-radius:8px; padding:8px 12px; color:var(--text-hi); font-size:12.5px; outline:none; font-family:var(--font-mono); }
 
+/* ============ VIDEO PLAYER MODAL ============ */
+.video-modal-overlay{
+  position:fixed; inset:0; z-index:500; display:none; align-items:center; justify-content:center;
+  background:rgba(4,10,20,.78); backdrop-filter:blur(6px); padding:24px;
+}
+.video-modal-overlay.open{ display:flex; }
+.video-modal{
+  width:100%; max-width:860px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+.video-modal-head{
+  display:flex; align-items:center; justify-content:space-between; padding:14px 18px;
+  border-bottom:1px solid var(--panel-border); gap:14px;
+}
+.video-modal-head h4{ font-size:14.5px; font-weight:600; line-height:1.4; }
+.video-modal-close{
+  width:32px; height:32px; border-radius:9px; border:1px solid var(--panel-border); background:rgba(255,255,255,.04);
+  color:var(--text-hi); flex-shrink:0; font-size:15px; display:flex; align-items:center; justify-content:center;
+}
+.video-modal-close:hover{ border-color:var(--cyan); color:var(--cyan); }
+.video-modal-body{ position:relative; width:100%; aspect-ratio:16/9; background:#000; }
+.video-modal-body iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-modal-fallback{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; text-align:center; padding:30px; color:var(--text-mid);
+}
+.video-modal-fallback .big{ font-size:30px; }
+.video-modal-fallback p{ font-size:13.5px; max-width:400px; line-height:1.6; }
+.video-modal-foot{ padding:12px 18px; font-size:12px; color:var(--text-low); border-top:1px solid var(--panel-border); }
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 980px){
   .grid-4{ grid-template-columns:repeat(2,1fr); }
@@ -598,7 +627,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
       <div class="panel-title">⚙️ YouTube Data API v3 Connection</div>
       <p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data.</p>
       <div class="api-note">
-        <button id="showKeyRow">AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40</button>
+        <button id="showKeyRow">🔑 Connect your YouTube Data API v3 key (optional)</button>
       </div>
       <div class="key-row" id="keyRow">
         <input type="text" id="apiKeyInput" placeholder="Paste YouTube Data API v3 key…">
@@ -636,6 +665,18 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
   </div>
 </div>
 
+<!-- ============ VIDEO PLAYER MODAL ============ -->
+<div class="video-modal-overlay" id="videoModalOverlay">
+  <div class="glass-strong video-modal">
+    <div class="video-modal-head">
+      <h4 id="videoModalTitle">Video title</h4>
+      <button class="video-modal-close" id="videoModalClose" aria-label="Close video">✕</button>
+    </div>
+    <div class="video-modal-body" id="videoModalBody"></div>
+    <div class="video-modal-foot" id="videoModalFoot"></div>
+  </div>
+</div>
+
 <div class="toast glass-strong" id="toast"></div>
 
 <script>
@@ -646,7 +687,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 /* ---------- In-memory state (no localStorage per platform rules) ---------- */
 const state = {
   focusMode: false,
-  youtubeApiKey: 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40',
+  youtubeApiKey: '', // paste a real YouTube Data API v3 key via the About section to enable live playback
   currentSkill: null,
   currentLevel: 'all',
   recentSearches: [],
@@ -697,6 +738,7 @@ function generateDemoVideos(skill){
         title, level, channel: ch, views,
         duration: `${mins}:${String(Math.floor(rand()*59)).padStart(2,'0')}`,
         thumb: `https://placehold.co/640x360/0f172a/22d3ee?text=${encodeURIComponent(skill)}`,
+        isReal: false // demo videos are simulated — no real video exists behind this ID
       });
     });
   });
@@ -789,11 +831,12 @@ async function runSearch(query){
   document.getElementById('aiPickStrip').style.display = 'none';
 
   let videos;
-  if(state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40){
+  if(state.youtubeApiKey){
     try{
-      videos = await fetchYouTubeVideos(skill, state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40);
+      videos = await fetchYouTubeVideos(skill, state.youtubeApiKey);
     }catch(e){
       console.warn('YouTube API call failed, falling back to demo data', e);
+      showToast('Live YouTube fetch failed — showing demo results instead');
       videos = generateDemoVideos(skill);
     }
   } else {
@@ -849,7 +892,8 @@ async function fetchYouTubeVideos(query, apiKey){
       return {
         id: v.id, title: v.snippet.title, channel: v.snippet.channelTitle,
         views, duration: `${mins}:${String(s).padStart(2,'0')}`,
-        thumb: v.snippet.thumbnails.medium.url, level
+        thumb: v.snippet.thumbnails.medium.url, level,
+        isReal: true // came straight from the YouTube Data API — safe to embed and play
       };
     })
     .sort((a,b)=>b.views-a.views);
@@ -983,15 +1027,51 @@ function renderRecent(){
   el.querySelectorAll('li[data-q]').forEach(li=>li.addEventListener('click',()=>runSearch(li.dataset.q)));
 }
 
-/* Simple in-page "watch" experience: focus-mode compliant (no comments/suggested/shorts) */
+/* ---------- Watch modal: real playback for API-sourced videos, honest fallback for demo data ---------- */
+const videoModalOverlay = document.getElementById('videoModalOverlay');
+const videoModalBody = document.getElementById('videoModalBody');
+const videoModalTitle = document.getElementById('videoModalTitle');
+const videoModalFoot = document.getElementById('videoModalFoot');
+
 function openWatchModal(id, list){
   const v = list.find(v=>v.id===id);
   if(!v) return;
+
   state.watched++;
   document.getElementById('watchedVal').textContent = state.watched;
-  showToast(`Now learning: ${v.title.slice(0,40)}${v.title.length>40?'…':''}`);
-  window.scrollTo({top:0, behavior:'smooth'});
+
+  videoModalTitle.textContent = v.title;
+
+  if(v.isReal){
+    // Real YouTube video ID from the Data API — embed and autoplay it directly.
+    videoModalBody.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(v.id)}?autoplay=1&rel=0" title="${escapeHtml(v.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    videoModalFoot.textContent = `${v.channel} · ${formatViews(v.views)} · ${v.duration}`;
+  } else {
+    // Demo-mode video: this card was AI-generated sample data, not a real upload, so there is
+    // nothing to embed. Rather than fake a broken player, send the learner straight to a real
+    // YouTube search for this exact title so they can actually watch something.
+    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(v.title)}`;
+    videoModalBody.innerHTML = `
+      <div class="video-modal-fallback">
+        <div class="big">🎬</div>
+        <p>This is a demo-mode result (simulated for design purposes), so there's no real video behind it yet.
+        Connect a YouTube Data API v3 key in the About section for live, playable results — or open a real search for this exact title on YouTube now.</p>
+        <a class="btn btn-primary btn-sm" href="${searchUrl}" target="_blank" rel="noopener">↗ Search this title on YouTube</a>
+      </div>`;
+    videoModalFoot.textContent = `${v.channel} · ${formatViews(v.views)} · ${v.duration} · Demo data`;
+  }
+
+  videoModalOverlay.classList.add('open');
 }
+
+function closeWatchModal(){
+  videoModalOverlay.classList.remove('open');
+  videoModalBody.innerHTML = ''; // stop any playing iframe immediately
+}
+
+document.getElementById('videoModalClose').addEventListener('click', closeWatchModal);
+videoModalOverlay.addEventListener('click', (e)=>{ if(e.target === videoModalOverlay) closeWatchModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && videoModalOverlay.classList.contains('open')) closeWatchModal(); });
 
 /* ---------- Progress bars ---------- */
 function renderProgress(){
@@ -1080,9 +1160,9 @@ document.getElementById('showKeyRow').addEventListener('click', ()=>{
   document.getElementById('keyRow').classList.toggle('show');
 });
 document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
-  const val = document.getElementById('AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40').value.trim();
-  state.AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40= val;
-  showToast(val ? 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40' : ' https://shirishalanke.github.io/Learnfocus-AI/');
+  const val = document.getElementById('apiKeyInput').value.trim();
+  state.youtubeApiKey = val;
+  showToast(val ? 'API key saved — your next search will fetch live, playable videos' : 'API key cleared — back to demo mode');
 });
 
 /* ---------- Toast ---------- */
