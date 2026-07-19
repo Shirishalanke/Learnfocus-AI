@@ -627,10 +627,10 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
       <div class="panel-title">⚙️ YouTube Data API v3 Connection</div>
       <p style="font-size:13px; color:var(--text-mid); line-height:1.6;">LearnFocus AI is wired to fetch live results from the YouTube Data API v3, filtered to Education category, sorted by relevance/views, and stripped of entertainment, gaming, Shorts and Reels. Running in demo mode by default with curated sample data.</p>
       <div class="api-note">
-        <button id="showKeyRow">🔑 Connect your YouTube Data API v3 key (optional)</button>
+        <button id="AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40">🔑 Connect your YouTube Data API v3 key (optional)</button>
       </div>
       <div class="key-row" id="keyRow">
-        <input type="text" id="apiKeyInput" placeholder="Paste YouTube Data API v3 key…">
+        <input type="text" id="apikeyInput" placeholder="AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40">
         <button class="btn btn-primary btn-sm" id="saveKeyBtn">Save</button>
       </div>
     </div>
@@ -687,7 +687,7 @@ footer{ border-top:1px solid var(--panel-border); padding:40px 0; margin-top:40p
 /* ---------- In-memory state (no localStorage per platform rules) ---------- */
 const state = {
   focusMode: false,
-  youtubeApiKey: '', // paste a real YouTube Data API v3 key via the About section to enable live playback
+  youtubeApiKey: 'AIzaSyBc_nEgzy7fg06_MTkyKDo6xCMa6f4RF40', // paste a real YouTube Data API v3 key via the About section to enable live playback
   currentSkill: null,
   currentLevel: 'all',
   recentSearches: [],
